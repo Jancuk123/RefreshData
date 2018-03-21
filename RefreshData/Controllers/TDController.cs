@@ -15,20 +15,24 @@ namespace RefreshData.Controllers
         private RDContext db = new RDContext();
 
         // GET: TD
-        public ActionResult Index()
+        public ActionResult Index(int? id)
         {
+            int stevilka = id ?? 1;
             var data = (from x in db.TestDatas
+                        where x.IdPostaje==stevilka
+                        orderby x.Id descending
                         select x).Take(30);
-
+            ViewData["id"] = stevilka;
             return View(data);
         }
 
-        public ActionResult ZadnjiPodatki()
+        public ActionResult ZadnjiPodatki(int? id)
         {
-            int randomSkip = new Random().Next(1, 1000);
+            int stevilka = id ?? 1;
             var data1 = (from x in db.TestDatas
-                         orderby x.Id
-                        select x).Skip(randomSkip).Take(5);
+                         where x.IdPostaje==stevilka
+                         orderby x.Id descending
+                        select x).Take(5);
             return PartialView("zadnji", data1);
         }
         

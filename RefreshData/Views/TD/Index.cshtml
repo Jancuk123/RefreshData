@@ -6,8 +6,16 @@
 
 <h2>RefreshData - tabela</h2>
 
+<div class="container">
+    <a class="btn btn-primary" href="~/TD/Index/1">1</a>
+    <a class="btn btn-primary" href="~/TD/Index/2">2</a>
+    <a class="btn btn-primary" href="~/TD/Index/3">3</a>
+    <a class="btn btn-primary" href="~/TD/Index/4">4</a>
+    <a class="btn btn-primary" href="~/TD/Index/5">5</a>
+</div>
+
 <div id="zadnji">
-    @Html.Partial("zadnji", Model.Take(5))
+    @Html.Partial("zadnji", Model.Take(5), new ViewDataDictionary { { "id", ViewData["id"] } })
 </div>
 
 <div class="container">
@@ -50,6 +58,6 @@
 </div>
 <script>
     $(function () {
-        setInterval(function () { $('#zadnji').load('/TD/ZadnjiPodatki')}, 2000);
+        setInterval(function () { $('#zadnji').load('/TD/ZadnjiPodatki') }, 2000);
     });
 </script>
