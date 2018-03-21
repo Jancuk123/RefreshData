@@ -1,0 +1,170 @@
+﻿@model IEnumerable<RefreshData.Models.TestData>
+
+<div class="container" style="background-color:lightgrey">
+
+    <div id="chart-container" style="border:2px solid black;border-radius:4px;background-color:rgba(255, 255, 255, 0.60);position:relative;width:100%;height:400px;min-width:300px;margin-top:20px;">
+        <canvas id="bar-chart"></canvas>
+    </div>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdPostaje)
+            </th>
+            <th>
+                Datum
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Podatek1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Podatek2)
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdPostaje)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Dan). @Html.DisplayFor(modelItem => item.Mesec). @Html.DisplayFor(modelItem => item.Leto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Podatek1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Podatek2)
+
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+
+<script>
+    var podatki = @Html.Raw(Json.Encode(Model));
+
+    var temp = podatki.map(function (item) {
+        return item.Podatek1
+    });
+    var datumi = podatki.map(function (item) {
+      
+        return item.Dan+". "+item.Mesec+". "+item.Leto;
+    });
+
+    var vlaga = podatki.map(function (item) {
+        return item.Podatek2
+    });
+
+        new Chart(document.getElementById("bar-chart"), {
+            type: 'bar',
+            data: {
+                labels: datumi,
+                datasets: [
+                    {
+                        type: 'line',
+                        label: "Temperatura",
+                        backgroundColor: 'orangered',
+                        borderColor: 'orangered',
+                        borderWidth: 2,
+                        data: temp,
+                        fill: false,
+                        yAxisID: 'yaxis2',
+                        cubicInterpolationMode: 'monotone'
+                    },
+                    {
+                        type: 'bar',
+                        label: "Vlaga",
+                        borderColor: '#A1ABDE',
+                        backgroundColor: "#A1ABDE",
+                        hoverBackgroundColor: "#959EC7",
+                        hoverBorderColor: "#959EC7",
+                        borderWidth: 2,
+                        data: vlaga,
+                        yAxisID: 'yaxis1'
+                    }
+
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    xAxes: [{
+                        barPercentage: 0.8,
+                        categoryPercentage: 1,
+                        ticks: {
+                            callback: function (tick, index, array) {
+                                return (index % 2) ? "" : tick;
+                            },
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Datum',
+                            fontSize: 11
+                        },
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Vlaga',
+                            fontSize: 11
+                        },
+                        barPercentage: 0.85,
+                        categoryPercentage: 1,
+                        type: 'linear',
+                        id: 'yaxis1',
+                        display: true,
+                        position: 'right',
+                        ticks: {
+                            max: 100,
+                            beginAtZero: true,
+                            callback: function (value, index, values) {
+                                return value + '%';
+                            }
+                        },
+                        gridLines: {
+                            drawOnChartArea: false,
+                        }
+                    },
+                    {
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temperatura',
+                            fontSize: 11
+                        },
+                        type: 'linear',
+                        id: 'yaxis2',
+                        display: true,
+                        position: 'left',
+                        ticks: {
+                            max: 50,
+                            beginAtZero: true,
+                            callback: function (value, index, values) {
+                                return value + '°C';
+                            }
+                        }
+                    }]
+                },
+                legend: { display: true },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                title: {
+                    display: true,
+                    text: 'Temperatura in vlaga zadnjih 24ur',
+                    fontSize: 16
+                },
+                showXLabels: 10,
+            }
+
+
+        });
+    
+</script>
