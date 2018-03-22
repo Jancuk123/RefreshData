@@ -27,29 +27,39 @@ namespace NapolniRD
         {
             RDEntities db = new RDEntities();
             Random r = new Random();
-            for (int k = 0; k < 1; k++)  //leto
+            TestDatas zadnji = (from x in db.TestDatas
+                                orderby x.Id descending
+                                select x).FirstOrDefault();
+            TestDatas nov = new TestDatas();
+            for (int k=1; k<6;k++)
             {
-                TestDatas nov = new TestDatas();
-                nov.Leto = k + 2028;
-                for (int l = 1; l < 13; l++)   //mesec
+                nov.IdPostaje = k;
+                if (zadnji.Dan!=30)
                 {
-                    nov.Mesec = l;
-                    for (int j = 1; j < 31; j++)   //dan
-                    {
-                        nov.Dan = j;
-                        for (int p = 1; p < 6; p++)   //postaje
-                        {
-                            nov.IdPostaje = p;
-                            nov.Podatek1 = r.Next(5, 20) + r.Next(5, 20) + r.Next(5, 20);
-                            nov.Podatek2 = r.Next(2, 10) + r.Next(2, 10) + r.Next(2, 10);
-                            db.TestDatas.Add(nov);
-                            db.SaveChanges();
-                            Console.WriteLine(nov.IdPostaje + " " + nov.Dan + " " + nov.Mesec + " " + nov.Leto);
-                        }
-                    }
-
+                    nov.Dan = zadnji.Dan + 1;
+                    nov.Mesec = zadnji.Mesec;
+                    nov.Leto = zadnji.Leto;
                 }
-            }
+                else
+                {
+                    nov.Dan = 1;
+                    if (zadnji.Mesec!=12)
+                    {
+                        nov.Mesec = zadnji.Mesec + 1;
+                        nov.Leto = zadnji.Leto;
+                    }
+                    else
+                    {
+                        nov.Mesec = 1;
+                        nov.Leto = zadnji.Leto + 1;
+                    }
+                }
+                nov.Podatek1 = r.Next(5, 20) + r.Next(5, 20) + r.Next(5, 20);
+                nov.Podatek2 = r.Next(2, 10) + r.Next(2, 10) + r.Next(2, 10);
+                db.TestDatas.Add(nov);
+                db.SaveChanges();
+                Console.WriteLine(nov.IdPostaje+" - "+nov.Dan+". "+nov.Mesec+". "+nov.Leto+" - "+nov.Podatek1+" - "+nov.Podatek2);
+            }            
         }
     }
 }
